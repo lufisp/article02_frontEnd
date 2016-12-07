@@ -1,0 +1,44 @@
+html, body { height: 90%; margin: 0; padding: 0; }
+
+
+#mainPane{ 
+    width: 90%;
+    margin: 0 auto;
+    margin-top: 20px;
+}
+
+#myMap { 
+    float:left;
+    width: 790px;
+    height: 600px; 
+}
+
+#analyse{
+    clear: both;    
+    min-height: 200px;
+}
+
+#atmData{
+    float: right;
+    margin: 5px;
+    padding: 20px;
+    width: 300px;
+    height: 600px;
+    overflow: scroll;
+    background-color: cadetblue;
+}
+
+.atmCashMap, .atmCashMap svg{
+    position: absolute;    
+}
+
+.atmCashText{
+    font-size: 20px;
+    fill: red;
+}
+
+.line{
+    fill:none;
+    stroke: #000;
+    stroke-width:1px;
+}
