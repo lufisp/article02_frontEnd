@@ -3,6 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+var atmCash;
 var atmCashHist = [];
 var atmOperHist = {};
 var host = "http://localhost:8080";
@@ -11,6 +12,7 @@ var atmMarkers = [];
 var atmMap;
 var atmMapOverlay;
 var analyse;
+var updateTime = 2000;
 
 $(document).ready(function () {
     getDataFirstTime();
@@ -56,9 +58,9 @@ function AtmMapOverlay() {
     var paddingTextY = 22;
     var paddingTextX = 0;
 
-    function transform(d) {
-        d = new google.maps.LatLng(d.latitude, d.longitude);
-        d = projection.fromLatLngToDivPixel(d);
+    function transform(d) {        
+        d = new google.maps.LatLng(d.latitude, d.longitude);        
+        d = projection.fromLatLngToDivPixel(d);        
         return d3.select(this)
                 .style("left", (d.x - paddingX) + "px")
                 .style("top", (d.y - paddingY) + "px");
@@ -67,12 +69,14 @@ function AtmMapOverlay() {
     this.onAdd = function () {
         layer = d3.select(this.getPanes().overlayLayer).append("div").attr("class", "atmCashMap");
     };
-    this.draw = function () {
-        projection = this.getProjection();
+    this.draw = function () { 
+        projection = this.getProjection();        
         var atmCashMap = layer.selectAll("svg")
-                .data(atmCashHist[0])
+                .data(atmCashHist[0])                
                 .each(transform)
-                .enter().append("svg");
+                .enter()
+                .append("svg")
+                .each(transform);
 
         atmCashMap.selectAll("text")
                 .data(function (a) {
@@ -90,7 +94,7 @@ function AtmMapOverlay() {
                 .text("");
     };
 
-    this.update = function () {
+    this.update = function () {        
         var diff = this.diffOper();
         var atmCashMap = layer.selectAll("svg")
                 .data(d3.values(diff))
@@ -118,6 +122,7 @@ function AtmMapOverlay() {
             var object = {
                 "id": previus[i].id,
                 "value": current[i].value - previus[i].value
+                
             };
             diff.push(object);
         }
@@ -149,9 +154,11 @@ function startMap() {
         zoom: 12
     });
     map.setOptions({styles: mapStyles});
+    dropMarkerAtm(map);
     atmMapOverlay = new AtmMapOverlay();
     atmMapOverlay.setMap(map);
-    dropMarkerAtm(map);
+    
+    
 }
 
 function getDataFirstTime() {    
@@ -160,8 +167,7 @@ function getDataFirstTime() {
         url: host + '/getDataFirstTime/',
         dataType: 'json',
         success: function (data, textStatus, jqXHR) {            
-            atmCashHist.push(data);
-            atmCashHist.push(data);            
+            atmCashHist.push(data);             
             var html = "<table class='table'>";
             html = html + "<tr><th>Id</th>";
             html = html + "<th>Value</th>";           
@@ -189,7 +195,7 @@ function getDataFirstTime() {
 
             setTimeout(function () {
                 getData();
-            }, 3000);
+            }, updateTime);
         }
     });
 }
@@ -221,12 +227,13 @@ function getData() {
             //add just the html constructed above
             $("#atmData").append(html);
 
-            atmMapOverlay.update();
+            
             analyse.updateAnalysis(atmOperHist);
+            atmMapOverlay.update();
 
             setTimeout(function () {
                 getData();
-            }, 3000);
+            }, updateTime);
         }
     });
 }

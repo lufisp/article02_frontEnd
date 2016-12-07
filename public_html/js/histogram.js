@@ -1,69 +1,13 @@
 
-function Analyse() {
+function Histogram() {
     this.maxDomainValue = 1000;
     this.numOperationsTrack = 40;
     this.operDiff = [];
     this.operSun = [];
     this.atmId = "";
 
-
-    this.startArrays = function (data) {
-        /*The array data, has negative values, but want the array operDff and 
-         * operSun */
-        var init = 0;
-        if (data.length > this.numOperationsTrack) {
-            init = data.length - this.numOperationsTrack - 1;
-        } else {
-            init = 0;
-        }
-        
-        for (var i = init, j = 0; i < data.length; i++,j++) {            
-            if (i == init) {
-                this.operDiff[j] = 0;                
-            } else {
-                this.operDiff[j] = data[i] - data[i - 1];                
-            }
-        }
-        
-        for (var i = init, j = 0; i < data.length; i++,j++) {            
-            if (i == init) {
-                this.operSun[j] = 0;
-                /*Accumulates the previous diffs on the first ellement of the array*/
-                for(var k = 1; k < init; k++){
-                    this.operSun[j] += data[k] - data[k-1];
-                }
-            } else {                
-                this.operSun[j] = this.operSun[j - 1] + data[i] -  data[i - 1];
-            }
-        }
-
-    }
-
-    this.updateArrays = function (data) {
-        var lastElementOperDiff;
-        var lastElementSun;
-
-        if (this.operDiff.length > 0) {
-            lastElementOperDiff = this.operDiff[this.operDiff.length - 1];
-            this.operDiff.push(data[data.length - 1] - data[data.length - 2]);
-        } else
-            this.operDiff.push(0);
-
-        if (this.operSun.length > 0) {
-            lastElementSun = this.operSun[this.operSun.length - 1];
-            this.operSun.push(lastElementSun + data[data.length - 1] - data[data.length - 2]);
-        } else
-            this.operSun.push(0);
-    };
-
-    this.shiftArrays = function () {
-        if (this.operDiff.length > this.numOperationsTrack) {
-            this.operDiff.shift();
-            this.operSun.shift();
-        }
-    }
-
-    var svg = d3.select("#analyseSvg");
+    
+    var svg = d3.select("#histogramSvg");
     var margin = {top: 20, right: 20, bottom: 20, left: 50};
     var width = +svg.attr("width") - margin.left - margin.right;
     var height = +svg.attr("height") - margin.top - margin.bottom;
