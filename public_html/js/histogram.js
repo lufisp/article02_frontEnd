@@ -1,6 +1,6 @@
 
 function Histogram() {
-    this.maxDomainValue = 100000;
+    var maxDomainValue = 100000;
     this.numOperationsTrack = 40;
     this.operDiff = [];
     this.operSun = [];
@@ -16,7 +16,7 @@ function Histogram() {
     var numberOfAtms;
 
     var y = d3.scaleLinear()
-            .domain([0, this.maxDomainValue])
+            .domain([0, maxDomainValue])
             .range([height, 0]);
 
 
@@ -50,6 +50,15 @@ function Histogram() {
         this.bar.append("rect")
                 .attr("x", 1)
                 .attr("width", barWidth - paddingX)
+                .attr("fill", function (d) {
+                    if (d.value > 0.6 * maxDomainValue) {
+                        return "#579086";
+                    } else if (d.value > 0.4 * maxDomainValue) {
+                        return "#DDB835";
+                    } else
+                        return "#DD4A35";
+
+                })
                 .attr("height", function (d) {
                     return height - y(d.value);
                 });
@@ -77,11 +86,22 @@ function Histogram() {
                     return "translate(" + x(i) + "," + y(d.value) + ")";
                 })
                 .selectAll("rect")
+                .transition()
+                .duration(1500)
+                .attr("fill", function (d) {
+                    if (d.value > 0.6 * maxDomainValue) {
+                        return "#579086";
+                    } else if (d.value > 0.4 * maxDomainValue) {
+                        return "#DDB835";
+                    } else
+                        return "#DD4A35";
+
+                })
                 .attr("height", function (d) {
                     return height - y(d.value);
                 })
-                .selectAll("text")
                 
+
     }
 
 
