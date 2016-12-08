@@ -12,11 +12,13 @@ var atmMarkers = [];
 var atmMap;
 var atmMapOverlay;
 var analyse;
+var histogram;
 var updateTime = 2000;
 
 $(document).ready(function () {
     getDataFirstTime();
     analyse = new Analyse();
+    histogram = new Histogram();
 });
 
 function dropMarkerAtm(map) {
@@ -191,7 +193,7 @@ function getDataFirstTime() {
 
             startMap();
             analyse.startAnalysis(1,atmOperHist);
-
+            histogram.startHistogram(atmCashHist[0]);
 
             setTimeout(function () {
                 getData();
@@ -229,6 +231,7 @@ function getData() {
 
             
             analyse.updateAnalysis(atmOperHist);
+            histogram.updateHistogram(atmCashHist[atmCashHist.length - 1]);
             atmMapOverlay.update();
 
             setTimeout(function () {

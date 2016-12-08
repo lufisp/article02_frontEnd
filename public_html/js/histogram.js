@@ -1,104 +1,90 @@
 
 function Histogram() {
-    this.maxDomainValue = 1000;
+    this.maxDomainValue = 100000;
     this.numOperationsTrack = 40;
     this.operDiff = [];
     this.operSun = [];
     this.atmId = "";
+    this.bar;
 
-    
+
     var svg = d3.select("#histogramSvg");
     var margin = {top: 20, right: 20, bottom: 20, left: 50};
     var width = +svg.attr("width") - margin.left - margin.right;
     var height = +svg.attr("height") - margin.top - margin.bottom;
+    var paddingX = 2;
+    var numberOfAtms;
 
-    this.startAnalysis = function (atmId, atmOperHist) {
-        //console.log("Atm: " + atmId + " has been clicked");                
-        this.atmId = atmId;
-        this.operDiff = [];
-        this.operSun = [];
-        data = atmOperHist[this.atmId];
-        this.startArrays(data);
-                  
+    var y = d3.scaleLinear()
+            .domain([0, this.maxDomainValue])
+            .range([height, 0]);
+
+
+    this.startHistogram = function (atmCashHist) {
+        //console.log("Atm: " + atmId + " has been clicked");                        
+        this.atmCash = atmCashHist;
+        numberOfAtms = atmCashHist.length;
+        var barWidth = width / numberOfAtms;
+
 
         svg.selectAll("*").remove();
         var g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
         var x = d3.scaleLinear()
-                .domain([0, this.numOperationsTrack - 1])
+                .domain([0, this.atmCash.length])
                 .range([0, width]);
 
-        var y = d3.scaleLinear()
-                .domain([0, this.maxDomainValue])
-                .range([height, 0]);
-
-
-
-        var line = d3.line()
-                .x(function (d, i) {
-                    return x(i);
-                })
-                .y(function (d, i) {
-                    return y(d);
-                });
-
-        g.append("defs")
-                .append("clipPath")
-                .attr("id", "clip")
-                .append("rect")
-                .attr("width", width)
-                .attr("height", height);
-
         g.append("g")
-                .attr("class", "axis-y")
+                .attr("class", "axis-y-histogram")
                 .call(d3.axisLeft(y));
 
-        g.append("g")
-                .attr("clip-path", "url(#clip)")
-                .append("path")
-                .datum(this.operDiff)
-                .attr("class", "line")
-                .attr("id", "path_" + this.atmId)
-                .attr("d", line);
 
-    };
-    this.updateAnalysis = function (atmOperHist) {
-        data = atmOperHist[this.atmId];
-        this.updateArrays(data);
+        this.bar = g.selectAll(".bar")
+                .data(this.atmCash)
+                .enter()
+                .append("g")
+                .attr("class", "bar")
+                .attr("transform", function (d, i) {
+                    return "translate(" + x(i) + "," + y(d.value) + ")";
+                });
 
-        var x = d3.scaleLinear()
-                .domain([0, this.numOperationsTrack - 1])
-                .range([0, width]);
-
-        var y = d3.scaleLinear()
-                .domain([0, this.maxDomainValue])
-                .range([height, 0]);
-
-
-        var line = d3.line()
-                .x(function (d, i) {
-                    return x(i);
-                })
-                .y(function (d, i) {
-                    return y(-1 * d);
+        this.bar.append("rect")
+                .attr("x", 1)
+                .attr("width", barWidth - paddingX)
+                .attr("height", function (d) {
+                    return height - y(d.value);
+                });
+        this.bar.append("text")
+                .attr("y", -5)
+                .attr("x", barWidth / 2)
+                .attr("text-anchor", "middle")
+                .text(function (d) {
+                    return d.id
                 });
 
 
 
-        var path = d3.select("#path_" + this.atmId)
-                .attr("d", line)
-                .attr("transform", null)
-                .transition();
+    };
+    this.updateHistogram = function (atmCashHist) {
+        var x = d3.scaleLinear()
+                .domain([0, this.atmCash.length])
+                .range([0, width]);
 
-
-        if (data.length > this.numOperationsTrack)
-            path.attr("transform", "translate(" + x(-1) + ",0)")
-                    .duration(500)
-                    .ease(d3.easeLinear);
-
-        this.shiftArrays();
+        for (var i = 0; i < this.atmCash.length; i++) {
+            this.atmCash[i].value = atmCashHist[i].value;
+        }
+        this.bar
+                .attr("transform", function (d, i) {
+                    return "translate(" + x(i) + "," + y(d.value) + ")";
+                })
+                .selectAll("rect")
+                .attr("height", function (d) {
+                    return height - y(d.value);
+                })
+                .selectAll("text")
+                
     }
 
 
 
 }
-Analyse.prototype = {};
+Histogram.prototype = {};
