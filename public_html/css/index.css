@@ -2,44 +2,112 @@ html, body { height: 90%; margin: 0; padding: 0; }
 
 
 #mainPane{ 
-    width: 90%;
-    margin: 0 auto;
+    
     margin-top: 20px;
 }
 
-#myMap { 
-    float:left;
+#firstRow{
+    display: flex;
+    margin-bottom: 4px;
+}
+
+#mapContainer {         
+    width: 800px;
+    border: 3px solid #9CCFC8;
+    margin: 2px;  
+    
+}
+
+#myMap {     
     width: 790px;
     height: 600px; 
+    padding: 5px;
+}
+
+#titleMap{
+    background-color: #9CCFC8;
+    padding: 10px;
+    font-size: 18px;
+    color: #104F47;
+}
+
+#atmDataContainer{
+    border: 3px solid #9CCFC8;
+    margin: 2px;
+}
+
+#atmData{
+    padding: 2px;
+    width: 300px;
+    height: 600px;
+    overflow: scroll;    
+}
+
+#titleAtmData{
+    background-color: #9CCFC8;
+    padding: 10px;
+    font-size: 18px;
+    color: #104F47;
 }
 
 #analyse{
     clear: both;    
     min-height: 200px;
+    display: flex;
 }
 
-#atmData{
-    float: right;
-    margin: 5px;
-    padding: 20px;
-    width: 300px;
-    height: 600px;
-    overflow: scroll;
-    background-color: cadetblue;
+#analysisContainer{
+    border: 3px solid #9CCFC8;
+    margin: 2px;
 }
+
+#titleAnalysis{
+    background-color: #9CCFC8;
+    padding: 10px;
+    font-size: 18px;
+    color: #104F47;
+}
+
+#titleHistogram{
+    background-color: #9CCFC8;
+    padding: 10px;
+    font-size: 18px;
+    color: #104F47;
+}
+
+#histogramContainer{
+    border: 3px solid #9CCFC8;
+    margin: 2px;
+}
+
+
 
 .atmCashMap, .atmCashMap svg{
     position: absolute;    
 }
 
 .atmCashText{
-    font-size: 20px;
-    fill: red;
+    font-size: 15px;
+    fill: #F25E1D;
+    font-family: arial;
+    font-weight: bolder;
 }
 
 .line{
     fill:none;
-    stroke: #000;
-    stroke-width:1px;
+    stroke: #D73E3E;
+    stroke-width:2px;
 }
 
+.axis-y line{
+    stroke: #fff;
+}
+.axis-y path{
+    fill:none;
+    stroke: #fff;
+}
+
+.gridXLineAnalysis{
+    stroke: #ccc;
+    
+}

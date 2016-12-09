@@ -1,6 +1,5 @@
 
-function Histogram() {
-    var maxDomainValue = 100000;
+function Histogram() {    
     this.numOperationsTrack = 40;
     this.operDiff = [];
     this.operSun = [];
@@ -14,6 +13,7 @@ function Histogram() {
     var height = +svg.attr("height") - margin.top - margin.bottom;
     var paddingX = 2;
     var numberOfAtms;
+    var maxDomainValue = 100000;
 
     var y = d3.scaleLinear()
             .domain([0, maxDomainValue])

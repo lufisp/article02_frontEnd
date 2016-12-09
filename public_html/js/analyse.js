@@ -1,7 +1,7 @@
 
 function Analyse() {
-    this.maxDomainValue = 1000;
-    this.numOperationsTrack = 40;
+    this.maxDomainValue = 800;
+    this.numOperationsTrack = 25;
     this.operDiff = [];
     this.operSun = [];
     this.atmId = "";
@@ -115,6 +115,19 @@ function Analyse() {
                 .attr("class", "line")
                 .attr("id", "path_" + this.atmId)
                 .attr("d", line);
+        
+        g.append("g")
+                .selectAll("#gridXLineAnalysis")
+                .data(d3.range(this.numOperationsTrack))
+                .enter()
+                .append("line")
+                .attr("class","gridXLineAnalysis")
+                .attr("x1",function(d,i){return x(i)})
+                .attr("x2",function(d,i){return x(i)})
+                .attr("y1",0)
+                .attr("y2",height)
+        
+        d3.select("#titleAnalysis").html("Operation for atm: " + this.atmId);
 
     };
     this.updateAnalysis = function (atmOperHist) {
