@@ -21,37 +21,37 @@ $(document).ready(function () {
     histogram = new Histogram();
 });
 /*
-function dropMarkerAtm(map) {
-    var atmsPosition = [];
-    clearMarkers();
-    for (var i = 0; i < atmCashHist[0].length; i++) {
-        var id = atmCashHist[0][i].id;
-        var lat = Number(atmCashHist[0][i].latitude);
-        var lng = Number(atmCashHist[0][i].longitude);
-        var position = {"lat": lat, "lng": lng};
-        addMarker(id, position, map);
-    }
-}
-
-function addMarker(id, position, map) {
-    var marker = new google.maps.Marker({
-        position: position,
-        map: map,
-        animation: google.maps.Animation.DROP
-    });
-    marker.addListener('click', function () {
-        analyse.startAnalysis(id, atmOperHist);
-    });
-    atmMarkers.push(marker);
-}
-
-function clearMarkers() {
-    for (var i = 0; i < atmMarkers.length; i++) {
-        atmMarkers[i].setMap(null);
-    }
-    atmMarkers = [];
-}
-*/
+ function dropMarkerAtm(map) {
+ var atmsPosition = [];
+ clearMarkers();
+ for (var i = 0; i < atmCashHist[0].length; i++) {
+ var id = atmCashHist[0][i].id;
+ var lat = Number(atmCashHist[0][i].latitude);
+ var lng = Number(atmCashHist[0][i].longitude);
+ var position = {"lat": lat, "lng": lng};
+ addMarker(id, position, map);
+ }
+ }
+ 
+ function addMarker(id, position, map) {
+ var marker = new google.maps.Marker({
+ position: position,
+ map: map,
+ animation: google.maps.Animation.DROP
+ });
+ marker.addListener('click', function () {
+ analyse.startAnalysis(id, atmOperHist);
+ });
+ atmMarkers.push(marker);
+ }
+ 
+ function clearMarkers() {
+ for (var i = 0; i < atmMarkers.length; i++) {
+ atmMarkers[i].setMap(null);
+ }
+ atmMarkers = [];
+ }
+ */
 function AtmMapOverlay() {
     var layer;
     var projection;
@@ -61,7 +61,7 @@ function AtmMapOverlay() {
     var paddingTextX = -2;
     var maxDomainValue = 100000;
     var svgWidth = 30;
-    var svtHeight =50;
+    var svtHeight = 50;
 
     function transform(d) {
         d = new google.maps.LatLng(d.latitude, d.longitude);
@@ -81,13 +81,15 @@ function AtmMapOverlay() {
                 .each(transform)
                 .enter()
                 .append("svg")
-                .attr("width",svgWidth)
-                .attr("height",svtHeight)
-                .on("click",function(d){analyse.startAnalysis(d.id, atmOperHist)})
+                .attr("width", svgWidth)
+                .attr("height", svtHeight)
+                .on("click", function (d) {
+                    analyse.startAnalysis(d.id, atmOperHist)
+                })
                 .each(transform);
-        
-        
-        
+
+
+
 
         var arc = d3.arc()
                 .innerRadius(10)
@@ -96,12 +98,12 @@ function AtmMapOverlay() {
                 .endAngle(2 * Math.PI);
 
         var gAtmId = atmCashMap.append("g")
-        
-        
+
+
         gAtmId.append("path")
                 .attr("class", "atmCircle")
                 .attr("d", arc)
-                .attr("transform", "translate(15,15)")                
+                .attr("transform", "translate(15,15)")
                 .attr("fill", function (d) {
                     if (d.value > 0.6 * maxDomainValue) {
                         return "#579086";
@@ -111,8 +113,8 @@ function AtmMapOverlay() {
                         return "#DD4A35";
 
                 });
-                
-        
+
+
 
         gAtmId.append("text")
                 .attr("class", "atmCashTextId")
@@ -230,8 +232,11 @@ function getDataFirstTime() {
         type: 'GET',
         url: host + '/getDataFirstTime/',
         dataType: 'json',
-        success: function (data, textStatus, jqXHR) {
-            atmCashHist.push(data);
+        success: function (data, textStatus, jqXHR) { 
+            console.log("First Data");
+            console.log(data);
+            atmCashHist.push(Array.from(data));
+            atmCashHist.push(Array.from(data));
             var html = "<table class='table'>";
             html = html + "<tr><th>Id</th>";
             html = html + "<th>Value</th>";
@@ -242,7 +247,7 @@ function getDataFirstTime() {
                 html = html + " <td>";
                 html = html + data[tableIndex].id;
                 html = html + " </td>";
-                html = html + " <td>";
+                html = html + " <td id=columnValue_" + data[tableIndex].id + ">";
                 html = html + data[tableIndex].value;
                 html = html + " </td>";
                 html = html + "</tr>";
@@ -264,24 +269,69 @@ function getDataFirstTime() {
     });
 }
 
+/*
+ function getData() {
+ jQuery.ajax({
+ type: 'GET',
+ url: host + '/getData/',
+ dataType: 'json',
+ success: function (data, textStatus, jqXHR) {
+ atmCashHist.push(data)
+ var html = "<table class='table'>";
+ html = html + "<tr><th>Id</th>";
+ html = html + "<th>Value</th>";
+ for (var tableIndex in data) {
+ atmOperHist[data[tableIndex].id].push(data[tableIndex].value);
+ html = html + "<tr>";
+ html = html + " <td>";
+ html = html + data[tableIndex].id;
+ html = html + " </td>";
+ html = html + " <td>";
+ html = html + data[tableIndex].value;
+ html = html + " </td>";
+ html = html + "</tr>";
+ }
+ html += '</table>';
+ //reset the table
+ $("#atmData").html("");
+ //add just the html constructed above
+ $("#atmData").append(html);
+ 
+ 
+ analyse.updateAnalysis(atmOperHist);
+ histogram.updateHistogram(atmCashHist[atmCashHist.length - 1]);
+ atmMapOverlay.update();
+ 
+ setTimeout(function () {
+ getData();
+ }, updateTime);
+ }
+ });
+ }*/
+
+
 function getData() {
     jQuery.ajax({
         type: 'GET',
         url: host + '/getData/',
         dataType: 'json',
         success: function (data, textStatus, jqXHR) {
-            atmCashHist.push(data)
+            var lastData = Array.from(atmCashHist[atmCashHist.length - 1]);            
+            var dataOrig = Array.from(data);
+            var dataMerged = merge(lastData,dataOrig);
+            console.log(dataMerged);
+            atmCashHist.push(dataMerged)
             var html = "<table class='table'>";
             html = html + "<tr><th>Id</th>";
             html = html + "<th>Value</th>";
-            for (var tableIndex in data) {
-                atmOperHist[data[tableIndex].id].push(data[tableIndex].value);
+            for (var tableIndex in dataMerged) {
+                atmOperHist[dataMerged[tableIndex].id].push(dataMerged[tableIndex].value);
                 html = html + "<tr>";
                 html = html + " <td>";
-                html = html + data[tableIndex].id;
+                html = html + dataMerged[tableIndex].id;
                 html = html + " </td>";
                 html = html + " <td>";
-                html = html + data[tableIndex].value;
+                html = html + dataMerged[tableIndex].value;
                 html = html + " </td>";
                 html = html + "</tr>";
             }
@@ -302,3 +352,72 @@ function getData() {
         }
     });
 }
+
+
+
+
+function callback(a, b) {
+    return {"id": a.id, "value": a.value + b.value, "longitude": a.longitude, "latitude": a.latitude};
+}
+
+function merge(arrayA, arrayB) {
+    var arrayASorted = arrayA.sort(function (a, b) {
+        return a.id - b.id
+    });
+    var arrayBSorted = arrayB.sort(function (a, b) {
+        return a.id - b.id
+    });
+    var arrayBReduced = reduceByKey(arrayBSorted, "id", callback);
+
+    return mergeSortedArray(arrayASorted, arrayBReduced);
+}
+
+function mergeSortedArray(mainVector, updateVector) {
+    var vectorMerged = [];
+    while (mainVector.length > 0 || updateVector.length > 0) {
+        if (mainVector.length > 0 && updateVector.length > 0) {
+            if (mainVector[0].id == updateVector[0].id) {
+                /*Take the value in B, discard the value in A*/
+                vectorMerged.push(updateVector.shift());
+                mainVector.shift();
+            } else {
+                if (mainVector[0].id < updateVector[0].id) {
+                    vectorMerged.push(mainVector.shift());
+                } else
+                    vectorMerged.push(updateVector.shift());
+            }
+        } else
+        if (mainVector.length > 0) {
+            vectorMerged = vectorMerged.concat(mainVector);
+            break;
+        } else {
+            vectorMerged = vectorMerged.concat(updateVector);
+            break;
+        }
+    }
+    return vectorMerged;
+}
+
+
+function reduceByKey(array, key, callback) {
+    var reducedArray = []
+    var uniqueKeys = [];
+    var keys = array.map(function (a) {
+        return a[key]
+    }).sort()
+    for (var index in keys) {
+        if (uniqueKeys.length > 0) {
+            if (uniqueKeys[uniqueKeys.length - 1] != keys[index]) {
+                uniqueKeys.push(keys[index]);
+            }
+        } else
+            uniqueKeys.push(keys[index]);
+    }
+    uniqueKeys.forEach(function (k) {
+        reducedArray.push(array.filter(function (a) {
+            return a[key] == k
+        }).reduce(callback));
+    });
+    return reducedArray;
+}
+
